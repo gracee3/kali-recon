@@ -1,11 +1,14 @@
 FROM kalilinux/kali-rolling
 
 ARG DEBIAN_FRONTEND=noninteractive
-# Optional install of lightweight screenshot tooling (e.g. wkhtmltoimage) to keep default image lean.
-# Build with --build-arg ENABLE_SCREENSHOT_TOOL=1 to include it.
 ARG ENABLE_SCREENSHOT_TOOL=0
 
-RUN set -eux; \
+ENV HOME=/home/recon \
+    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+RUN set -euxo pipefail; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
       ca-certificates \
@@ -25,37 +28,33 @@ RUN set -eux; \
       subfinder \
       amass \
       httpx-toolkit \
-      wpscan; \
+      wpscan \
+      tini; \
     if [ "$ENABLE_SCREENSHOT_TOOL" = "1" ]; then \
       apt-get install -y --no-install-recommends wkhtmltopdf; \
     fi; \
-    ln -s /usr/bin/fdfind /usr/local/bin/fd || true; \
-    ln -s /usr/bin/httpx-toolkit /usr/local/bin/httpx || true; \
-    if [ ! -f /usr/local/bin/tini ]; then \
-      TINI_ARCH="$(dpkg --print-architecture)"; \
-      case "$TINI_ARCH" in \
-        amd64) TINI_RELEASE_ARCH=amd64 ;; \
-        arm64) TINI_RELEASE_ARCH=arm64 ;; \
-        armhf) TINI_RELEASE_ARCH=armhf ;; \
-        *) echo "Unsupported architecture for tini: $TINI_ARCH"; exit 1 ;; \
-      esac; \
-      curl -fsSL "https://github.com/krallin/tini/releases/latest/download/tini-${TINI_RELEASE_ARCH}" -o /usr/local/bin/tini; \
-      chmod +x /usr/local/bin/tini; \
-    fi; \
+    ln -sf /usr/bin/fdfind /usr/local/bin/fd; \
+    ln -sf /usr/bin/httpx-toolkit /usr/local/bin/httpx; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
-RUN useradd --create-home --shell /bin/bash recon \
- && mkdir -p /workspace/input /workspace/output /workspace/config /workspace/tmp \
- && chown -R recon:recon /workspace /home/recon
+RUN useradd --system --create-home --shell /bin/bash --home-dir /home/recon recon \
+ && install -d -m 0750 \
+      /home/recon \
+      /workspace/input \
+      /workspace/output \
+      /workspace/config \
+      /workspace/tmp \
+ && chown -R recon:recon /home/recon /workspace
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint
-COPY shell-init.sh /home/recon/.bashrc
+COPY --chown=recon:recon shell-init.sh /home/recon/.bashrc
 COPY recon-env.sh /usr/local/bin/recon-env
 
 RUN chmod +x /usr/local/bin/docker-entrypoint /usr/local/bin/recon-env \
- && chown recon:recon /home/recon/.bashrc \
- && chmod 755 /usr/local/bin/tini
+ && chmod 755 /usr/bin/tini \
+ && chmod 644 /home/recon/.bashrc \
+ && chmod 700 /workspace /home/recon
 
 USER recon
 

@@ -1,7 +1,9 @@
 # ~/.bashrc for recon container
 
-# Keep interactive sessions inside the mounted workspace by default.
-cd /workspace
+# Keep interactive sessions inside the mounted workspace when accessible.
+if [ -d /workspace ] && [ -r /workspace ] && [ -x /workspace ]; then
+  cd /workspace
+fi
 
 # Load shared config/environment when present.
 if [ -f /workspace/config/shell.env ]; then

@@ -1,0 +1,13 @@
+# VCS and local metadata
+.git
+.gitignore
+
+# Local environment/config files
+.env
+.env.*
+config/
+
+# Editors/OS
+.DS_Store
+.vscode/
+.idea/
