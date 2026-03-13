@@ -57,7 +57,7 @@ for d in /workspace /workspace/input /workspace/output /workspace/config /worksp
   if [ -d "$d" ]; then pass_one "dir:$d"; else fail_one "dir:$d"; fi
 done
 
-for c in curl wget git jq yq rg fd tree less dig nslookup host whois python3 pip3 subfinder amass httpx wpscan; do
+for c in curl wget git jq yq rg fd tree less dig nslookup host whois nmap nc openssl tcpdump python3 pip3 subfinder amass httpx wpscan; do
   if command -v "$c" >/dev/null; then pass_one "cmd:$c"; else fail_one "cmd:$c"; fi
 done
 
@@ -73,6 +73,15 @@ if [ "$SKIP_NETWORK" -eq 0 ]; then
 else
   echo "SKIP: network-check"
 fi
+
+nmap_out="$(nmap -V 2>&1 || true)"
+if printf '%s\n' "$nmap_out" | grep -qi 'Nmap version'; then pass_one "nmap-version"; else fail_one "nmap-version"; fi
+
+openssl_out="$(openssl version 2>&1 || true)"
+if [ -n "$openssl_out" ]; then pass_one "openssl-version"; else fail_one "openssl-version"; fi
+
+tcpdump_out="$(tcpdump --version 2>&1 || true)"
+if printf '%s\n' "$tcpdump_out" | grep -qi 'tcpdump version'; then pass_one "tcpdump-version"; else fail_one "tcpdump-version"; fi
 
 subfinder_out="$(subfinder -h 2>&1 || true)"
 if printf '%s\n' "$subfinder_out" | grep -Eq '(Subfinder is|^Usage:)'; then pass_one "subfinder-help"; else fail_one "subfinder-help"; fi

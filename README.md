@@ -23,6 +23,7 @@ Installed tooling:
 - `fd-find` (also available as `fd`)
 - `less`, `tree`
 - `dnsutils`, `whois`
+- `nmap`, `nc` (`netcat-openbsd`), `openssl`, `tcpdump`
 - `python3`, `python3-pip`
 - `subfinder`, `amass`, `httpx`, `wpscan`
 
@@ -120,6 +121,19 @@ docker run --rm \
 ```
 
 If multiple `.env` files exist in `/workspace/config`, `recon-env` will load them all into the environment.
+
+## Network diagnostics notes
+
+`tcpdump` is installed for packet-level checks, but capture in the container is restricted by default non-root execution. Most capture commands require extra Linux capabilities or root execution, for example:
+
+```bash
+docker run --rm -it \
+  --user root \
+  --cap-add=NET_RAW \
+  --cap-add=NET_ADMIN \
+  -v "$PWD:/workspace" \
+  kali-recon tcpdump -i any -c 5
+```
 
 ## Helpers
 

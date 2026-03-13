@@ -14,15 +14,19 @@ RUN set -euxo pipefail; \
       ca-certificates \
       curl \
       wget \
+      openssl \
       git \
       jq \
       yq \
       ripgrep \
       fd-find \
       less \
+      netcat-openbsd \
       tree \
+      nmap \
       dnsutils \
       whois \
+      tcpdump \
       python3 \
       python3-pip \
       subfinder \
