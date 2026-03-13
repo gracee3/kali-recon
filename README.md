@@ -69,6 +69,32 @@ docker run --rm \
   kali-recon amass enum -passive -d example.com
 ```
 
+## Test
+
+Run the project’s smoke test script:
+
+```bash
+./test-image.sh
+```
+
+The script:
+
+- builds the default image (unless `BUILD_DEFAULT=0`),
+- verifies required binary/tool presence,
+- verifies recon helpers and runtime defaults,
+- verifies `recon-env` config loading,
+- checks passthrough command behavior,
+- checks `pid 1` signal handling (`tini`),
+- and can run with optional checks.
+
+Optional modes:
+
+```bash
+BUILD_SCREENSHOT=1 ./test-image.sh
+SKIP_NETWORK_CHECK=1 ./test-image.sh
+IMAGE=my-registry/kali-recon:tag BUILD_DEFAULT=0 ./test-image.sh
+```
+
 If your bind mount is owned by your host UID/GID, pass it through explicitly:
 
 ```bash
