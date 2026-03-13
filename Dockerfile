@@ -31,10 +31,16 @@ RUN set -euxo pipefail; \
       wpscan \
       tini; \
     if [ "$ENABLE_SCREENSHOT_TOOL" = "1" ]; then \
-      apt-get install -y --no-install-recommends wkhtmltopdf; \
+      if apt-cache search '^wkhtmltopdf$' | grep -qx 'wkhtmltopdf'; then \
+        apt-get install -y --no-install-recommends wkhtmltopdf; \
+      else \
+        echo "WARN: ENABLE_SCREENSHOT_TOOL=1 but wkhtmltopdf is unavailable on this Kali snapshot. Skipping screenshot package."; \
+      fi; \
     fi; \
     ln -sf /usr/bin/fdfind /usr/local/bin/fd; \
     ln -sf /usr/bin/httpx-toolkit /usr/local/bin/httpx; \
+    mkdir -p /var/lib/libpostal; \
+    touch /var/lib/libpostal/transliteration; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 

@@ -28,7 +28,7 @@ Installed tooling:
 
 Optional at build time:
 
-- `wkhtmltopdf` for lightweight webpage screenshotting (`ENABLE_SCREENSHOT_TOOL=1`)
+- `wkhtmltopdf` (best-effort): `ENABLE_SCREENSHOT_TOOL=1` attempts to install it. If the package is not available in the current Kali snapshot, the build logs a warning and proceeds without it.
 
 ## Workspace layout
 
