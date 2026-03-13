@@ -70,6 +70,21 @@ docker run --rm \
   kali-recon amass enum -passive -d example.com
 ```
 
+For scripting and agent workflows:
+
+```bash
+./agent-run.sh shell
+./agent-run.sh run amass enum -passive -d example.com
+```
+
+`agent-run.sh` is a thin host-side wrapper that standardizes container invocation and workspace binding for both interactive and scripted use cases.
+
+Useful environment-driven modes:
+
+- `AGENT_ROOT=1` run as root (use with tcpdump/policy-level network tests).
+- `AGENT_NETRAW=1` add `NET_RAW` + `NET_ADMIN` capabilities.
+- `AGENT_REPORT=1 ./agent-run.sh check` prints a compact JSON result block after running tests.
+
 ## Test
 
 Run the project’s smoke test script:
