@@ -1,0 +1,18 @@
+# OS and editor noise
+.DS_Store
+Thumbs.db
+
+# Local shell and environment files
+.env
+.env*
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Editor metadata
+.vscode/
+.idea/
